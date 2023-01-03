@@ -20,6 +20,9 @@ and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/assignment_service>.
 
 ## Compile & Run
-make db-start
-make 
 
+```elixir
+make db-start
+make local-docker-build
+make local-docker-run
+```

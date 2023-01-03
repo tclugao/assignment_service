@@ -1,4 +1,8 @@
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
+
+SERVICE_NAME=assignment_service
+API_EXT_PORT=4000
+API_INT_PORT=4443
 ELIXIR_IMAGE=elixir:1.13.3
 
 DB_INSTANCE=assignment_service_database
@@ -22,6 +26,22 @@ local-docker-build:
 						  mix local.rebar --force && \
 						  mix deps.get && \
 						  mix deps.compile"
+
+.PHONY: local-docker-run
+local-docker-run:
+	@docker run -it \
+			--rm \
+			-e MIX_ENV=dev \
+			--volume $(shell pwd):/app \
+			--workdir /app \
+			--network assignment_service_net \
+			--ip 178.17.0.41 \
+			--publish "$(API_INT_PORT)":"$(API_INT_PORT)" \
+			--publish "$(API_EXT_PORT)":"$(API_EXT_PORT)" \
+			$(ELIXIR_IMAGE) \
+			/bin/bash -c "mix local.hex --force --if-missing && \
+						  mix local.rebar --force && \
+						  iex --sname $(SERVICE_NAME) -S mix"
 
 .PHONY: db-start
 db-start: create-network db-install
